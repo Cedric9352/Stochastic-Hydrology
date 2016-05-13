@@ -1,5 +1,5 @@
 function [phi,sigma_eps] = autoCorrFun(p,tau,rho)
-%% seasonal autoregressive model parameter estimation
+%% Seasonal autoregressive model parameter estimation
     % input:
     %	p is the order of SAR model
     %	rho is the autocorrelation coefficient matrix
