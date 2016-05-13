@@ -19,7 +19,7 @@ z = zeros(year,omega);
 z = z(:);
 rho = paraEst(X);
 
-%% iterative generation of sequence
+%%  
 while t ~= year
     while tau <= omega
         xi = normalDSS();
@@ -36,6 +36,7 @@ while t ~= year
         z(t,tau) = z_new;
         x(t,tau) = x_new;
         tau = tau + 1;
+        length = length - 1;
     end
     tau = 1;
     t = t + 1;
