@@ -29,10 +29,10 @@ for i = 1:col_X
             s_r = sqrt(var(X(:,j)));
             s_rk = sqrt(var(X(:,j-i+col_X)));
             sum = 0;
-            for k = 1:row_X
-                sum = sum + (X(k,j)-x_r)*(X(k,j-i+col_X)-x_rk);
+            for k = 2:row_X
+                sum = sum + (X(k,j)-x_r)*(X(k-1,j-i+col_X)-x_rk);
             end
-            rho(i,j) = sum/((row_X-1)*s_r*s_rk);
+            rho(i,j) = sum/((row_X-2)*s_r*s_rk);
         end
     end
 end

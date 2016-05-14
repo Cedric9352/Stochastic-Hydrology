@@ -1,4 +1,4 @@
-function SAR_seq = SARseq(p,X,omega,year)
+function [SAR_seq,normSAR] = SARseq(p,X,omega,year)
 %% Seasonal autoregressive model simulation
     % input:
     %   p is the order of SAR model
@@ -20,20 +20,24 @@ z = z(:);
 rho = paraEst(X);
 
 %% iterative generation of sequence
-while t ~= year
+while t <= year
     while tau <= omega
         xi = normalDSS();
-        [phi,sigma_eps] = autoCorrFun(p,tau+(t-1)*omega,rho);
+        if tau < p
+            [phi,sigma_eps] = autoCorrFun(p,tau-p+omega,rho);
+        else
+            [phi,sigma_eps] = autoCorrFun(p,tau,rho);
+        end
         epsilon = sqrt(sigma_eps) * xi;
         if t == 1 && tau == p
-            z_zero = [0,z(1:p-1)];
+            z_zero = [0,z(1:p-1)'];
             z_new = z_zero * flipud(phi) + epsilon;
         else
-            z = z((t-1)*omega+tau-p+1:(t-1)*omega+tau);
-            z_new = z * flipud(phi) + epsilon;
+            z_nonzero = z((t-1)*omega+tau-p+1:(t-1)*omega+tau);
+            z_new = z_nonzero' * flipud(phi) + epsilon;
         end
         x_new = mean(X(:,tau)) + sqrt(var(X(:,tau)))*z_new;
-        z(t,tau) = z_new;
+        z((t-1)*omega+tau) = z_new;
         x(t,tau) = x_new;
         tau = tau + 1;
     end
@@ -41,3 +45,9 @@ while t ~= year
     t = t + 1;
 end
         
+%% return sequence
+SAR_seq = x;
+normSAR = zeros(year,omega);
+for i = 1:year
+    normSAR(i,:) = z((i-1)*omega+1:i*omega);
+end
