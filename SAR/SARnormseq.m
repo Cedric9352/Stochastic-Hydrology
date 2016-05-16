@@ -1,5 +1,5 @@
-function [SAR_seq,normSAR] = SARseq(p,X,omega,year)
-%% Seasonal autoregressive model simulation
+function [SAR_seq,normSAR] = SARnormseq(p,X,omega,year)
+%% SAR normal distribution sequence simulation
     % input:
     %   p is the order of SAR model
     %   X is the original sequence
