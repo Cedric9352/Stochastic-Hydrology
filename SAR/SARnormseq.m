@@ -29,7 +29,7 @@ while t <= year
             z_zero = [0,z(1:p-1)'];
             z_new = z_zero * flipud(phi) + epsilon;
         else
-            z_nonzero = z((t-1)*omega+tau-p+1:(t-1)*omega+tau);
+            z_nonzero = z((t-1)*omega+tau-p:(t-1)*omega+tau-1);
             z_new = z_nonzero' * flipud(phi) + epsilon;
         end
         x_new = mean(X(:,tau)) + sqrt(var(X(:,tau)))*z_new;
