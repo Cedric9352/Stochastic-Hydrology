@@ -1,9 +1,10 @@
-function [phi,sigma_eps] = autoCorrFun(p,tau,rho)
+function [phi,sigma_eps] = autoCorrFun(p,tau,rho,omega)
 %% Seasonal autoregressive model parameter estimation
     % input:
     %	p is the order of SAR model
     %	rho is the autocorrelation coefficient matrix
     %	tau is the id of seasons
+    %   omega is the total season count
     % output:
     %   phi is the autoregressive coeffieient matrix
     %   sigma_eps is the variance of stochastics
@@ -17,7 +18,11 @@ A = zeros(p,p);
 for i = 1:p
     for j = 1:p
         if abs(i-j) ~= 0
-            A(i,j) = rho(abs(i-j),tau-min([i,j]));
+            if tau <= min([i,j])
+                A(i,j) = rho(abs(i-j),tau-min([i,j])+omega);
+            else
+                A(i,j) = rho(abs(i-j),tau-min([i,j]));
+            end
         else
             A(i,j) = 1;
         end

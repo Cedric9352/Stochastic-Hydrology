@@ -1,30 +1,43 @@
-function [SAR_seq,normSAR] = SARnormseq(p,X,year,omega)
+function [SAR_seq,ogaSAR] = SARidrndseq(p,X,year,omega)
 %% SAR normal distribution sequence simulation
     % input:
     %   p is the order of SAR model
-    %   X is the original normal distribution sequence
+    %   X is the original independent skewness distribution sequence
     %   omega is the total season count
     %   year is the required sequence length
     % output:
     %   SAR_seq is the simulated sequence
     %---------------------------------
     % author: Yujia Cheng @ Ocean University of China, Master of OE
-    % complete: May 13th, 2016  
+    % complete: May 17th, 2016  
 
 %% assumed initial value
 t = 1;
 tau = p;
 x = zeros(year,omega);
 z = zeros(year,omega);
+Csx = zeros(1,omega);
 z = z(:);
 rho = paraEst(X);
+
+%% calculation of skewness factor
+for i = 1:size(X,2)
+    sum = 0;
+    for j = 1:size(X,1)
+        sum = sum + (X(j,i)-mean(x(:,i))^3);
+    end
+    Csx(i) = (1/(size(X,1)-3))*sum/var(X(:,i))^3;
+end
 
 %% iterative generation of sequence
 while t <= year
     while tau <= omega
         xi = normalDSS();
         [phi,sigma_eps] = autoCorrFun(p,tau,rho,omega);
-        epsilon = sqrt(sigma_eps) * xi;
+        Cs_phi_tau = calCs(p,tau,omega,rho,phi,Csx);
+        PHI = (2/Cs_phi_tau)*(1+(Cs_phi_tau*xi/6)-(Cs_phi_tau^2/36))^3-...
+            2/Cs_phi_tau;
+        epsilon = sqrt(sigma_eps) * PHI;
         if t == 1 && tau == p
             z_zero = [0,z(1:p-1)'];
             z_new = z_zero * flipud(phi) + epsilon;
@@ -43,7 +56,7 @@ end
         
 %% return sequence
 SAR_seq = x;
-normSAR = zeros(year,omega);
+ogaSAR = zeros(year,omega);
 for i = 1:year
-    normSAR(i,:) = z((i-1)*omega+1:i*omega);
+    ogaSAR(i,:) = z((i-1)*omega+1:i*omega);
 end

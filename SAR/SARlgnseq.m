@@ -1,10 +1,10 @@
-function [SAR_seq,normSAR] = SARlgnseq(p,X,omega,year)
+function [SAR_seq,normSAR] = SARlgnseq(p,X,year,omega)
 %% SAR lognormal distribution sequence simulation
     % input:
     %   p is the order of SAR model
     %   X is the original lognormal distribution sequence
     %   omega is the total season count
-    %   length is the required sequence length
+    %   year is the required sequence length
     % output:
     %   SAR_seq is the simulated sequence
     %---------------------------------
@@ -15,7 +15,7 @@ function [SAR_seq,normSAR] = SARlgnseq(p,X,omega,year)
 t = 1;
 tau = p;
 x = zeros(year,omega);
-Y = zeros(year,omega);
+Y = zeros(size(X));
 y = zeros(year,omega);
 z = zeros(year,omega);
 z = z(:);
@@ -37,11 +37,7 @@ rho = paraEst(Y);
 while t <= year
     while tau <= omega
         xi = normalDSS();
-        if tau < p
-            [phi,sigma_eps] = autoCorrFun(p,tau-p+omega,rho);
-        else
-            [phi,sigma_eps] = autoCorrFun(p,tau,rho);
-        end
+        [phi,sigma_eps] = autoCorrFun(p,tau,rho,omega);
         epsilon = sqrt(sigma_eps) * xi;
         if t == 1 && tau == p
             z_zero = [0,z(1:p-1)'];
