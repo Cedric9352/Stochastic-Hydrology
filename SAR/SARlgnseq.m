@@ -15,10 +15,23 @@ function [SAR_seq,normSAR] = SARlgnseq(p,X,omega,year)
 t = 1;
 tau = p;
 x = zeros(year,omega);
+Y = zeros(year,omega);
 y = zeros(year,omega);
 z = zeros(year,omega);
 z = z(:);
-rho = paraEst(X);
+
+%% transformated from lognormal to normal
+Cs_x = zeros(1,omega);
+for i = 1:omega
+    Cs_x(i) = skewness(X(:,i));
+end
+eta = arrayfun(@(x)((sqrt(x^2+4)+x)/2)^(1/3)-...
+    ((sqrt(x^2+4)-x)/2)^(1/3),Cs_x);
+a = mean(X)-var(X)./eta;
+for i = 1:omega
+    Y(:,i) = log(X(:,i)-a(i));
+end
+rho = paraEst(Y);
 
 %% iterative generation of normal sequence
 while t <= year
@@ -37,7 +50,7 @@ while t <= year
             z_nonzero = z((t-1)*omega+tau-p+1:(t-1)*omega+tau);
             z_new = z_nonzero' * flipud(phi) + epsilon;
         end
-        y_new = mean(X(:,tau)) + sqrt(var(X(:,tau)))*z_new;
+        y_new = mean(Y(:,tau)) + sqrt(var(Y(:,tau)))*z_new;
         z((t-1)*omega+tau) = z_new;
         y(t,tau) = y_new;
         tau = tau + 1;
@@ -47,13 +60,6 @@ while t <= year
 end
 
 %% transformated from normal to lognormal
-Cs_x = zeros(1,omega);
-for i = 1:omega
-    Cs_x(i) = skewness(X(:,i));
-end
-eta = arrayfun(@(x)((sqrt(x^2+4)+x)/2)^(1/3)-...
-    ((sqrt(x^2+4)-x)/2)^(1/3),Cs_x);
-a = mean(X)-var(X)./eta;
 for j = 1:omega
     x(:,j) = a(j)+exp(y(:,j));
 end
