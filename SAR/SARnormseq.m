@@ -1,4 +1,4 @@
-function [SAR_seq,normSAR] = SARnormseq(p,X,year,omega)
+function [SAR_seq,SAR_norm] = SARnormseq(p,X,year,omega)
 %% SAR normal distribution sequence simulation
     % input:
     %   p is the order of SAR model
@@ -7,6 +7,7 @@ function [SAR_seq,normSAR] = SARnormseq(p,X,year,omega)
     %   year is the required sequence length
     % output:
     %   SAR_seq is the simulated sequence
+    %   SAR_norm is the normal sequence
     %---------------------------------
     % author: Yujia Cheng @ Ocean University of China, Master of OE
     % complete: May 13th, 2016  
@@ -43,7 +44,7 @@ end
         
 %% return sequence
 SAR_seq = x;
-normSAR = zeros(year,omega);
+SAR_norm = zeros(year,omega);
 for i = 1:year
-    normSAR(i,:) = z((i-1)*omega+1:i*omega);
+    SAR_norm(i,:) = z((i-1)*omega+1:i*omega);
 end
