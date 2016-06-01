@@ -139,6 +139,14 @@ function Save_Callback(hObject, eventdata, handles)
 % hObject    handle to Save (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+x = getappdata(0,'Result');
+if isempty(x)
+    msgbox('Please analysis before save result!','Error',...
+        'error');
+else
+    cd(pwd)
+    save('result.txt',x);
+end
 
 
 % --------------------------------------------------------------------
