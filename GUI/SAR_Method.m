@@ -22,7 +22,7 @@ function varargout = SAR_Method(varargin)
 
 % Edit the above text to modify the response to help SAR_Method
 
-% Last Modified by GUIDE v2.5 25-May-2016 17:50:48
+% Last Modified by GUIDE v2.5 27-May-2016 15:38:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -198,6 +198,9 @@ switch title
         if(~isreal(x))
             msgbox('Wrong order for SAR model, please input again',...
                 'Error','error');
+        elseif(isnan(x))
+            msgbox('Wrong length for original sequence, please load again',...
+                'Error','error');
         else
             msgbox('Calculate successfully!','Notice','warn');
             setappdata(0,'Result',x);
@@ -207,6 +210,9 @@ switch title
         if(~isreal(x))
             msgbox('Wrong order for SAR model, please input again',...
                 'Error','error');
+        elseif(isnan(x))
+            msgbox('Wrong length for original sequence, please load again',...
+                'Error','error');
         else
             msgbox('Calculate successfully!','Notice','warn');
             setappdata(0,'Result',x);
@@ -215,7 +221,10 @@ switch title
         x = SARidrndseq(handles.p,X,handles.y,handles.w);
         if(~isreal(x))
             msgbox('Wrong order for SAR model, please input again',...
-           'Error','error');
+                'Error','error');
+        elseif(isnan(x))
+            msgbox('Wrong length for original sequence, please load again',...
+                'Error','error');
         else
             msgbox('Calculate successfully!','Notice','warn');
             setappdata(0,'Result',x);
@@ -224,6 +233,9 @@ switch title
         x = SARW_Hseq(handles.p,X,handles.y,handles.w);
         if(~isreal(x))
             msgbox('Wrong order for SAR model, please input again',...
+                'Error','error');
+        elseif(isnan(x))
+            msgbox('Wrong length for original sequence, please load again',...
                 'Error','error');
         else
             msgbox('Calculate successfully!','Notice','warn');
@@ -296,4 +308,50 @@ function text_y_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit8_Callback(hObject, eventdata, handles)
+% hObject    handle to edit8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit8 as text
+%        str2double(get(hObject,'String')) returns contents of edit8 as a double
+NumStr = get(handles.edit8,'string');
+handles.wp = str2double(NumStr);
+guidata(hObject,handles);
+setappdata(0,'wp',str2double(NumStr));
+
+    
+% --- Executes during object creation, after setting all properties.
+function edit8_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+handles.wp = 50;
+guidata(hObject,handles);
+setappdata(0,'wp',handles.wp);
+
+
+% --- Executes on button press in pushbutton2.
+function pushbutton2_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+x = getappdata(0,'Result');
+if isempty(x)
+    msgbox('Please analyse before warm-up',...
+        'Error','error');
+else
+    x = x(handles.wp+1:end,:);
+    setappdata(0,'Result',x);
+    msgbox('Warm-up successfully!','Notice','warn');
 end

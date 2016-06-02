@@ -145,15 +145,15 @@ if isempty(x)
         'error');
 else
     cd(pwd)
-    save('result.txt',x);
+    save('result.txt','x','-ASCII');
 end
-
 
 % --------------------------------------------------------------------
 function Close_Callback(hObject, eventdata, handles)
 % hObject    handle to Close (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+rmappdata(0,'Result');
 close(handles.figure1);
 
 % --------------------------------------------------------------------
@@ -233,6 +233,9 @@ if isempty(x)
     msgbox('Please analyse before checking result',...
         'Error','error');
 else
+    current_result = 'mean';
+    setappdata(0,'c_r',current_result);
+    SAR_Result;
 end
     
 % --------------------------------------------------------------------
@@ -245,6 +248,9 @@ if isempty(x)
     msgbox('Please analyse before checking result',...
         'Error','error');
 else
+    current_result = 'var';
+    setappdata(0,'c_r',current_result);
+    SAR_Result;
 end
 
 % --------------------------------------------------------------------
@@ -257,6 +263,9 @@ if isempty(x)
     msgbox('Please analyse before checking result',...
         'Error','error');
 else
+    current_result = 'rho';
+    setappdata(0,'c_r',current_result);
+    SAR_Result;
 end
 
 % --------------------------------------------------------------------
@@ -269,4 +278,7 @@ if isempty(x)
     msgbox('Please analyse before checking result',...
         'Error','error');
 else
+    current_result = 'cs';
+    setappdata(0,'c_r',current_result);
+    SAR_Result;
 end
