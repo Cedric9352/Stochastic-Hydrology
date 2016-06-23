@@ -24,5 +24,5 @@ for i = 1:p
 end
 
 %% calculation
-Cs_phi = Cs*(phi.^3)/([1,rho(1:p,tau)']*phi);
+Cs_phi = Cs*(phi.^3)/([1,rho(1:p,tau)']*phi)^(3/2);
 
